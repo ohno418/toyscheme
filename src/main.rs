@@ -6,8 +6,11 @@ fn main() {
         stdout().flush().expect("stdout flush failed");
 
         let mut input = String::new();
-        stdin().read_line(&mut input).expect("read_line() failed");
+        let nread = stdin().read_line(&mut input).expect("read_line() failed");
 
-        print!("{input}");
+        // Do not print if only a newline ("\n") is read.
+        if nread > 1 {
+            print!("{input}");
+        }
     }
 }
