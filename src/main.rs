@@ -1,4 +1,5 @@
 use std::io::{stdin, stdout, Write};
+use toyscheme::read_expr;
 
 fn main() {
     loop {
@@ -6,11 +7,11 @@ fn main() {
         stdout().flush().expect("stdout flush failed");
 
         let mut input = String::new();
-        let nread = stdin().read_line(&mut input).expect("read_line() failed");
+        stdin().read_line(&mut input).expect("read_line() failed");
 
-        // Do not print if only a newline ("\n") is read.
-        if nread > 1 {
-            print!("{input}");
-        }
+        match read_expr(&input) {
+            Ok(output) => println!("{output}"),
+            Err(msg) => println!("error: {msg}"),
+        };
     }
 }
