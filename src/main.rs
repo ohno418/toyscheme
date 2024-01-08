@@ -1,5 +1,5 @@
 use std::io::{stdin, stdout, Write};
-use toyscheme::read_expr;
+use toyscheme::{read_expr, ExprResult};
 
 fn main() {
     loop {
@@ -10,8 +10,9 @@ fn main() {
         stdin().read_line(&mut input).expect("read_line() failed");
 
         match read_expr(&input) {
-            Ok(output) => println!("{output}"),
-            Err(msg) => println!("error: {msg}"),
+            ExprResult::Num(num) => println!("{num}"),
+            ExprResult::Nop => println!(""),
+            ExprResult::Err(msg) => println!("error: {msg}"),
         };
     }
 }
