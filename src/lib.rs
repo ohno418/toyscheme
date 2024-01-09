@@ -21,32 +21,27 @@ pub fn read_expr(input: &str) -> ExprResult {
         input
     };
 
-    // Do not print if only a newline ("\n") is read.
-    if input.is_empty() {
-        return ExprResult::Nop;
-    }
-
     let mut chars = input.chars().peekable();
-    while let Some(c) = chars.peek() {
-        if c.is_digit(10) {
-            match read_number(&mut chars) {
-                Ok(num) => return ExprResult::Num(num),
-                Err(msg) => return ExprResult::Err(msg),
+    match chars.peek() {
+        Some(c) => {
+            if c.is_digit(10) {
+                match read_number(&mut chars) {
+                    Ok(num) => ExprResult::Num(num),
+                    Err(msg) => ExprResult::Err(msg),
+                }
+            } else {
+                ExprResult::Err("unknown input".to_string())
             }
         }
-
-        return ExprResult::Err("unknown input".to_string());
+        None => ExprResult::Nop,
     }
-
-    // TODO: Check if no chars left here.
-    unreachable!();
 }
 
-fn read_number(chars: &mut Peekable<Chars>) -> Result<u64, String> {
+fn read_number(input: &mut Peekable<Chars>) -> Result<u64, String> {
     let mut num_str = String::new();
-    while let Some(c) = chars.peek() {
+    while let Some(c) = input.peek() {
         if c.is_digit(10) {
-            let c = chars.next().unwrap();
+            let c = input.next().unwrap();
             num_str.push(c);
         } else {
             break;
@@ -55,7 +50,7 @@ fn read_number(chars: &mut Peekable<Chars>) -> Result<u64, String> {
     num_str.parse::<u64>().map_err(|_| {
         format!(
             "cannot read a number from \"{}\"",
-            chars.clone().collect::<String>()
+            input.clone().collect::<String>()
         )
     })
 }
