@@ -3,7 +3,7 @@ use super::number::parse_number;
 #[derive(Debug, PartialEq)]
 pub enum ExprResult {
     /// Number
-    Num(u64),
+    Num(i64),
     /// No expression found
     Nop,
     /// Error
@@ -23,7 +23,7 @@ pub fn parse_expr(input: &str) -> ExprResult {
 
     match input.chars().next() {
         Some(c) => {
-            if c.is_digit(10) {
+            if c.is_digit(10) || c == '-' {
                 match parse_number(&mut input) {
                     Ok(num) => ExprResult::Num(num),
                     Err(msg) => ExprResult::Err(msg),

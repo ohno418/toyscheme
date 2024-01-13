@@ -1,6 +1,17 @@
-pub(super) fn parse_number(input: &mut &str) -> Result<u64, String> {
+pub(super) fn parse_number(input: &mut &str) -> Result<i64, String> {
     let mut num_str = String::new();
+    let mut is_first = true;
     while let Some(c) = input.chars().next() {
+        if is_first {
+            is_first = false;
+
+            if c == '-' {
+                num_str.push(c);
+                *input = &input[1..];
+                continue;
+            }
+        }
+
         if c.is_digit(10) {
             num_str.push(c);
             *input = &input[1..];
@@ -8,7 +19,7 @@ pub(super) fn parse_number(input: &mut &str) -> Result<u64, String> {
             break;
         }
     }
-    num_str.parse::<u64>().map_err(|_| {
+    num_str.parse::<i64>().map_err(|_| {
         format!(
             "cannot parse a number from \"{}\"",
             input.chars().collect::<String>()
@@ -37,14 +48,11 @@ mod parse_number_tests {
     }
 
     #[test]
-    fn cannot_parse_negative_number() {
+    fn parse_negative_number() {
         let mut s = "-42 hello";
         let result = parse_number(&mut s);
-        assert_eq!(
-            result,
-            Err("cannot parse a number from \"-42 hello\"".to_string())
-        );
-        assert_eq!(s, "-42 hello");
+        assert_eq!(result, Ok(-42));
+        assert_eq!(s, " hello");
     }
 
     #[test]
