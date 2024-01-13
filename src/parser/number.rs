@@ -19,14 +19,19 @@ pub(super) fn parse_number(input: &mut &str) -> Result<i64, String> {
         }
     }
 
-    *input = &input[num_str.len()..];
-
-    num_str.parse::<i64>().map_err(|_| {
+    let num_result = num_str.parse::<i64>().map_err(|_| {
         format!(
             "cannot parse a number from \"{}\"",
             input.chars().collect::<String>()
         )
-    })
+    });
+
+    if num_result.is_ok() {
+        // Consume the input only when parsing has succeeded.
+        *input = &input[num_str.len()..];
+    }
+
+    num_result
 }
 
 #[cfg(test)]
@@ -66,5 +71,16 @@ mod parse_number_tests {
             Err("cannot parse a number from \"hello\"".to_string())
         );
         assert_eq!(s, "hello");
+    }
+
+    #[test]
+    fn cannot_parse_too_big_number() {
+        let mut s = "9999999999999999999999999";
+        let result = parse_number(&mut s);
+        assert_eq!(
+            result,
+            Err("cannot parse a number from \"9999999999999999999999999\"".to_string())
+        );
+        assert_eq!(s, "9999999999999999999999999");
     }
 }
