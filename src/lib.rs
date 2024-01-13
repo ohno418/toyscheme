@@ -28,9 +28,9 @@ mod tests {
     }
 
     #[test]
-    fn eval_unknown_ident() {
+    fn eval_unknown_sym() {
         let input = "hi\n";
         let result = eval(input);
-        assert_eq!(result.to_string(), "error: unknown input");
+        assert_eq!(result.to_string(), "error: unbound variable: hi");
     }
 }

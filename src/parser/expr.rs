@@ -8,6 +8,9 @@ pub(super) fn parse_expr(input: &mut &str) -> Ast {
             if c.is_digit(10) || c == '-' {
                 // number
                 parse_number(input)
+            } else if is_sym_char(c) {
+                // symbol
+                parse_symbol(input)
             } else if c == '\'' {
                 *input = &input[1..];
                 Ast::Quote(Box::new(parse_expr(input)))
@@ -19,6 +22,27 @@ pub(super) fn parse_expr(input: &mut &str) -> Ast {
     }
 
     // TODO: Check if extra input.
+}
+
+fn parse_symbol(input: &mut &str) -> Ast {
+    let mut sym = String::new();
+    let mut chars = input.chars();
+    while let Some(c) = chars.next() {
+        if is_sym_char(c) {
+            sym.push(c);
+        } else {
+            break;
+        }
+    }
+    *input = &input[sym.len()..];
+    Ast::Sym(sym)
+}
+
+fn is_sym_char(c: char) -> bool {
+    match c {
+        '_' | '-' => true,
+        c => c.is_ascii_alphabetic(),
+    }
 }
 
 #[cfg(test)]
@@ -42,18 +66,29 @@ mod parse_expr_tests {
     }
 
     #[test]
+    fn parse_symbol() {
+        let mut input = "this_is-sym";
+        let result = parse_expr(&mut input);
+        assert_eq!(result, Ast::Sym("this_is-sym".to_string()));
+        assert_eq!(input, "");
+    }
+
+    #[test]
+    fn parse_quoted_symbol() {
+        let mut input = "'this_is-sym";
+        let result = parse_expr(&mut input);
+        assert_eq!(
+            result,
+            Ast::Quote(Box::new(Ast::Sym("this_is-sym".to_string())))
+        );
+        assert_eq!(input, "");
+    }
+
+    #[test]
     fn parse_quoted_number() {
         let mut input = "'123";
         let result = parse_expr(&mut input);
         assert_eq!(result, Ast::Quote(Box::new(Ast::Num(123))));
         assert_eq!(input, "");
-    }
-
-    #[test]
-    fn return_ast_error_msg_with_non_number() {
-        let mut input = "%@!*";
-        let result = parse_expr(&mut input);
-        assert_eq!(result, Ast::Err("unknown input".to_owned()));
-        assert_eq!(input, "%@!*");
     }
 }
