@@ -9,7 +9,7 @@ fn main() {
         let mut input = String::new();
         stdin().read_line(&mut input).expect("read_line() failed");
 
-        match read_eval_expr(&input) {
+        match eval_expr(&input) {
             ExprResult::Num(num) => println!("{num}"),
             ExprResult::Nop => println!(""),
             ExprResult::Err(msg) => println!("error: {msg}"),

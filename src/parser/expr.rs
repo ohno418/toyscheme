@@ -1,4 +1,4 @@
-use super::number::read_number;
+use super::number::parse_number;
 
 #[derive(Debug, PartialEq)]
 pub enum ExprResult {
@@ -10,7 +10,8 @@ pub enum ExprResult {
     Err(String),
 }
 
-pub fn read_expr(input: &str) -> ExprResult {
+/// Parses and evaluates an expression, including a definition.
+pub fn parse_expr(input: &str) -> ExprResult {
     // Strip terminating '\n'.
     let input = if input.ends_with('\n') {
         &input[..input.len() - 1]
@@ -24,7 +25,7 @@ pub fn read_expr(input: &str) -> ExprResult {
     match chars.peek() {
         Some(c) => {
             if c.is_digit(10) {
-                match read_number(&mut chars) {
+                match parse_number(&mut chars) {
                     Ok(num) => ExprResult::Num(num),
                     Err(msg) => ExprResult::Err(msg),
                 }
@@ -37,41 +38,41 @@ pub fn read_expr(input: &str) -> ExprResult {
 }
 
 #[cfg(test)]
-mod read_expr_tests {
+mod parse_expr_tests {
     use super::*;
 
     #[test]
     fn return_empty_string_with_empty_input() {
         let input = "";
-        let result = read_expr(input);
+        let result = parse_expr(input);
         assert_eq!(result, ExprResult::Nop);
     }
 
     #[test]
     fn return_empty_string_with_only_newline() {
         let input = "\n";
-        let result = read_expr(input);
+        let result = parse_expr(input);
         assert_eq!(result, ExprResult::Nop);
     }
 
     #[test]
     fn handle_input_without_terminated_newline() {
         let input = "42";
-        let result = read_expr(input);
+        let result = parse_expr(input);
         assert_eq!(result, ExprResult::Num(42));
     }
 
     #[test]
     fn parse_number_and_return_as_is() {
         let input = "42\n";
-        let result = read_expr(input);
+        let result = parse_expr(input);
         assert_eq!(result, ExprResult::Num(42));
     }
 
     #[test]
     fn return_error_msg_with_non_number() {
         let input = "hello\n";
-        let result = read_expr(input);
+        let result = parse_expr(input);
         assert_eq!(result, ExprResult::Err("unknown input".to_owned()));
     }
 }
