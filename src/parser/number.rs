@@ -1,3 +1,4 @@
+// TODO: Change the return type to `Ast`.
 pub(super) fn parse_number(input: &mut &str) -> Result<i64, String> {
     let mut num_str = String::new();
     let mut chars = input.chars();
