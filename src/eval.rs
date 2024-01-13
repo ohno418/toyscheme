@@ -14,6 +14,7 @@ pub enum EvalResult {
 pub(super) fn eval(ast: Ast) -> EvalResult {
     match ast {
         Ast::Num(num) => EvalResult::Num(num),
+        Ast::Quote(inner) => eval(*inner),
         Ast::None => EvalResult::None,
         Ast::Err(msg) => EvalResult::Err(msg),
     }
@@ -36,6 +37,13 @@ mod eval_tests {
     #[test]
     fn eval_num() {
         let ast = Ast::Num(42);
+        let result = eval(ast);
+        assert_eq!(result, EvalResult::Num(42));
+    }
+
+    #[test]
+    fn eval_quoted_num() {
+        let ast = Ast::Quote(Box::new(Ast::Num(42)));
         let result = eval(ast);
         assert_eq!(result, EvalResult::Num(42));
     }

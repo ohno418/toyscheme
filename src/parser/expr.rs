@@ -8,6 +8,9 @@ pub(super) fn parse_expr(input: &mut &str) -> Ast {
             if c.is_digit(10) || c == '-' {
                 // number
                 parse_number(input)
+            } else if c == '\'' {
+                *input = &input[1..];
+                Ast::Quote(Box::new(parse_expr(input)))
             } else {
                 Ast::Err("unknown input".to_string())
             }
@@ -35,6 +38,14 @@ mod parse_expr_tests {
         let mut input = "42";
         let result = parse_expr(&mut input);
         assert_eq!(result, Ast::Num(42));
+        assert_eq!(input, "");
+    }
+
+    #[test]
+    fn parse_quoted_number() {
+        let mut input = "'123";
+        let result = parse_expr(&mut input);
+        assert_eq!(result, Ast::Quote(Box::new(Ast::Num(123))));
         assert_eq!(input, "");
     }
 

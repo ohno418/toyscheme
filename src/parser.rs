@@ -6,6 +6,8 @@ mod number;
 pub(crate) enum Ast {
     /// Number
     Num(i64),
+    /// Quote
+    Quote(Box<Ast>),
     /// No expression to parse found
     None,
     /// Error
