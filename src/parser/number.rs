@@ -1,12 +1,9 @@
-use std::iter::Peekable;
-use std::str::Chars;
-
-pub(super) fn parse_number(input: &mut Peekable<Chars>) -> Result<u64, String> {
+pub(super) fn parse_number(input: &mut &str) -> Result<u64, String> {
     let mut num_str = String::new();
-    while let Some(c) = input.peek() {
+    while let Some(c) = input.chars().next() {
         if c.is_digit(10) {
-            let c = input.next().unwrap();
             num_str.push(c);
+            *input = &input[1..];
         } else {
             break;
         }
@@ -14,7 +11,7 @@ pub(super) fn parse_number(input: &mut Peekable<Chars>) -> Result<u64, String> {
     num_str.parse::<u64>().map_err(|_| {
         format!(
             "cannot parse a number from \"{}\"",
-            input.clone().collect::<String>()
+            input.chars().collect::<String>()
         )
     })
 }
@@ -24,35 +21,40 @@ mod parse_number_tests {
     use super::parse_number;
 
     #[test]
-    fn parse_a_number_from_chars() {
-        let s = "42 hello".to_string();
-        let mut chars = s.chars().peekable();
-        let result = parse_number(&mut chars);
+    fn parse_a_number() {
+        let mut s = "42";
+        let result = parse_number(&mut s);
         assert_eq!(result, Ok(42));
-        assert_eq!(chars.collect::<String>(), " hello".to_string());
+        assert_eq!(s, "");
+    }
+
+    #[test]
+    fn parse_a_number_with_extra_input() {
+        let mut s = "42 hello";
+        let result = parse_number(&mut s);
+        assert_eq!(result, Ok(42));
+        assert_eq!(s, " hello");
     }
 
     #[test]
     fn cannot_parse_negative_number() {
-        let s = "-42 hello".to_string();
-        let mut chars = s.chars().peekable();
-        let result = parse_number(&mut chars);
+        let mut s = "-42 hello";
+        let result = parse_number(&mut s);
         assert_eq!(
             result,
             Err("cannot parse a number from \"-42 hello\"".to_string())
         );
-        assert_eq!(chars.collect::<String>(), "-42 hello".to_string());
+        assert_eq!(s, "-42 hello");
     }
 
     #[test]
     fn cannot_parse_non_number() {
-        let s = "hello".to_string();
-        let mut chars = s.chars().peekable();
-        let result = parse_number(&mut chars);
+        let mut s = "hello";
+        let result = parse_number(&mut s);
         assert_eq!(
             result,
             Err("cannot parse a number from \"hello\"".to_string())
         );
-        assert_eq!(chars.collect::<String>(), "hello".to_string());
+        assert_eq!(s, "hello");
     }
 }

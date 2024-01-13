@@ -13,7 +13,7 @@ pub enum ExprResult {
 /// Parses and evaluates an expression, including a definition.
 pub fn parse_expr(input: &str) -> ExprResult {
     // Strip terminating '\n'.
-    let input = if input.ends_with('\n') {
+    let mut input = if input.ends_with('\n') {
         &input[..input.len() - 1]
     } else {
         // NOTE: It's not assumed that a terminating '\n' is missing, but we
@@ -21,11 +21,10 @@ pub fn parse_expr(input: &str) -> ExprResult {
         input
     };
 
-    let mut chars = input.chars().peekable();
-    match chars.peek() {
+    match input.chars().next() {
         Some(c) => {
             if c.is_digit(10) {
-                match parse_number(&mut chars) {
+                match parse_number(&mut input) {
                     Ok(num) => ExprResult::Num(num),
                     Err(msg) => ExprResult::Err(msg),
                 }
@@ -35,6 +34,8 @@ pub fn parse_expr(input: &str) -> ExprResult {
         }
         None => ExprResult::Nop,
     }
+
+    // TODO: Check if extra input.
 }
 
 #[cfg(test)]
