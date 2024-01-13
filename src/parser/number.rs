@@ -1,24 +1,26 @@
 pub(super) fn parse_number(input: &mut &str) -> Result<i64, String> {
     let mut num_str = String::new();
+    let mut chars = input.chars();
     let mut is_first = true;
-    while let Some(c) = input.chars().next() {
+    while let Some(c) = chars.next() {
         if is_first {
             is_first = false;
 
             if c == '-' {
                 num_str.push(c);
-                *input = &input[1..];
                 continue;
             }
         }
 
         if c.is_digit(10) {
             num_str.push(c);
-            *input = &input[1..];
         } else {
             break;
         }
     }
+
+    *input = &input[num_str.len()..];
+
     num_str.parse::<i64>().map_err(|_| {
         format!(
             "cannot parse a number from \"{}\"",
