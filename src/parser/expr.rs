@@ -1,17 +1,18 @@
 use super::number::parse_number;
 
+/// Represents an abstract syntax tree (AST), the result of the parsing.
 #[derive(Debug, PartialEq)]
-pub enum ExprResult {
+pub enum Ast {
     /// Number
     Num(i64),
-    /// No expression found
-    Nop,
+    /// No expression to parse found
+    None,
     /// Error
     Err(String),
 }
 
 /// Parses and evaluates an expression, including a definition.
-pub fn parse_expr(input: &str) -> ExprResult {
+pub fn parse_expr(input: &str) -> Ast {
     // Strip terminating '\n'.
     let mut input = if input.ends_with('\n') {
         &input[..input.len() - 1]
@@ -25,14 +26,14 @@ pub fn parse_expr(input: &str) -> ExprResult {
         Some(c) => {
             if c.is_digit(10) || c == '-' {
                 match parse_number(&mut input) {
-                    Ok(num) => ExprResult::Num(num),
-                    Err(msg) => ExprResult::Err(msg),
+                    Ok(num) => Ast::Num(num),
+                    Err(msg) => Ast::Err(msg),
                 }
             } else {
-                ExprResult::Err("unknown input".to_string())
+                Ast::Err("unknown input".to_string())
             }
         }
-        None => ExprResult::Nop,
+        None => Ast::None,
     }
 
     // TODO: Check if extra input.
@@ -46,34 +47,34 @@ mod parse_expr_tests {
     fn return_empty_string_with_empty_input() {
         let input = "";
         let result = parse_expr(input);
-        assert_eq!(result, ExprResult::Nop);
+        assert_eq!(result, Ast::None);
     }
 
     #[test]
     fn return_empty_string_with_only_newline() {
         let input = "\n";
         let result = parse_expr(input);
-        assert_eq!(result, ExprResult::Nop);
+        assert_eq!(result, Ast::None);
     }
 
     #[test]
     fn handle_input_without_terminated_newline() {
         let input = "42";
         let result = parse_expr(input);
-        assert_eq!(result, ExprResult::Num(42));
+        assert_eq!(result, Ast::Num(42));
     }
 
     #[test]
     fn parse_number_and_return_as_is() {
         let input = "42\n";
         let result = parse_expr(input);
-        assert_eq!(result, ExprResult::Num(42));
+        assert_eq!(result, Ast::Num(42));
     }
 
     #[test]
     fn return_error_msg_with_non_number() {
         let input = "hello\n";
         let result = parse_expr(input);
-        assert_eq!(result, ExprResult::Err("unknown input".to_owned()));
+        assert_eq!(result, Ast::Err("unknown input".to_owned()));
     }
 }

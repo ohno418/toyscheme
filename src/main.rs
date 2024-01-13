@@ -17,10 +17,10 @@ fn read() -> String {
     input
 }
 
-fn print(parse: ExprResult) {
-    match parse {
-        ExprResult::Num(num) => println!("{num}"),
-        ExprResult::Nop => println!(""),
-        ExprResult::Err(msg) => println!("error: {msg}"),
+fn print(ast: Ast) {
+    match ast {
+        Ast::Num(num) => println!("{num}"),
+        Ast::None => println!(""),
+        Ast::Err(msg) => println!("error: {msg}"),
     };
 }
