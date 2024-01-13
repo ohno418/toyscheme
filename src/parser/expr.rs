@@ -44,35 +44,35 @@ mod parse_expr_tests {
     use super::*;
 
     #[test]
-    fn return_empty_string_with_empty_input() {
+    fn return_none_ast_with_empty_input() {
         let input = "";
         let result = parse_expr(input);
         assert_eq!(result, Ast::None);
     }
 
     #[test]
-    fn return_empty_string_with_only_newline() {
+    fn return_none_ast_with_only_newline() {
         let input = "\n";
         let result = parse_expr(input);
         assert_eq!(result, Ast::None);
     }
 
     #[test]
-    fn handle_input_without_terminated_newline() {
+    fn parse_number_without_terminated_newline() {
         let input = "42";
         let result = parse_expr(input);
         assert_eq!(result, Ast::Num(42));
     }
 
     #[test]
-    fn parse_number_and_return_as_is() {
+    fn parse_number_with_terminated_newline() {
         let input = "42\n";
         let result = parse_expr(input);
         assert_eq!(result, Ast::Num(42));
     }
 
     #[test]
-    fn return_error_msg_with_non_number() {
+    fn return_ast_error_msg_with_non_number() {
         let input = "hello\n";
         let result = parse_expr(input);
         assert_eq!(result, Ast::Err("unknown input".to_owned()));
