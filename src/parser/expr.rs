@@ -7,10 +7,7 @@ pub(super) fn parse_expr(input: &mut &str) -> Ast {
         Some(c) => {
             if c.is_digit(10) || c == '-' {
                 // number
-                match parse_number(input) {
-                    Ok(num) => Ast::Num(num),
-                    Err(msg) => Ast::Err(msg),
-                }
+                parse_number(input)
             } else {
                 Ast::Err("unknown input".to_string())
             }

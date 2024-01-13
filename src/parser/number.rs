@@ -1,5 +1,6 @@
-// TODO: Change the return type to `Ast`.
-pub(super) fn parse_number(input: &mut &str) -> Result<i64, String> {
+use super::Ast;
+
+pub(super) fn parse_number(input: &mut &str) -> Ast {
     let mut num_str = String::new();
     let mut chars = input.chars();
     let mut is_first = true;
@@ -20,30 +21,28 @@ pub(super) fn parse_number(input: &mut &str) -> Result<i64, String> {
         }
     }
 
-    let num_result = num_str.parse::<i64>().map_err(|_| {
-        format!(
+    match num_str.parse::<i64>() {
+        Ok(num) => {
+            // Consume the input only when parsing has succeeded.
+            *input = &input[num_str.len()..];
+            Ast::Num(num)
+        }
+        Err(_) => Ast::Err(format!(
             "cannot parse a number from \"{}\"",
             input.chars().collect::<String>()
-        )
-    });
-
-    if num_result.is_ok() {
-        // Consume the input only when parsing has succeeded.
-        *input = &input[num_str.len()..];
+        )),
     }
-
-    num_result
 }
 
 #[cfg(test)]
 mod parse_number_tests {
-    use super::parse_number;
+    use super::*;
 
     #[test]
     fn parse_a_number() {
         let mut s = "42";
         let result = parse_number(&mut s);
-        assert_eq!(result, Ok(42));
+        assert_eq!(result, Ast::Num(42));
         assert_eq!(s, "");
     }
 
@@ -51,7 +50,7 @@ mod parse_number_tests {
     fn parse_a_number_with_extra_input() {
         let mut s = "42 hello";
         let result = parse_number(&mut s);
-        assert_eq!(result, Ok(42));
+        assert_eq!(result, Ast::Num(42));
         assert_eq!(s, " hello");
     }
 
@@ -59,7 +58,7 @@ mod parse_number_tests {
     fn parse_negative_number() {
         let mut s = "-42 hello";
         let result = parse_number(&mut s);
-        assert_eq!(result, Ok(-42));
+        assert_eq!(result, Ast::Num(-42));
         assert_eq!(s, " hello");
     }
 
@@ -69,7 +68,7 @@ mod parse_number_tests {
         let result = parse_number(&mut s);
         assert_eq!(
             result,
-            Err("cannot parse a number from \"hello\"".to_string())
+            Ast::Err("cannot parse a number from \"hello\"".to_string())
         );
         assert_eq!(s, "hello");
     }
@@ -80,7 +79,7 @@ mod parse_number_tests {
         let result = parse_number(&mut s);
         assert_eq!(
             result,
-            Err("cannot parse a number from \"9999999999999999999999999\"".to_string())
+            Ast::Err("cannot parse a number from \"9999999999999999999999999\"".to_string())
         );
         assert_eq!(s, "9999999999999999999999999");
     }
