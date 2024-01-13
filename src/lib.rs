@@ -1,8 +1,10 @@
+mod eval;
 mod parser;
 
-pub use parser::Ast;
+pub use eval::EvalResult;
 
-/// Evaluates an expression, including a definition.
-pub fn eval(input: &str) -> Ast {
-    parser::parse_expr(input)
+/// Evaluates user input as an expression, including a definition.
+pub fn eval(input: &str) -> EvalResult {
+    let ast = parser::parse_expr(input);
+    eval::eval(ast)
 }

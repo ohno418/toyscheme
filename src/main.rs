@@ -4,7 +4,8 @@ use toyscheme::*;
 fn main() {
     loop {
         let input = read();
-        print(eval(&input));
+        let eval_result = eval(&input);
+        println!("{}", eval_result);
     }
 }
 
@@ -15,12 +16,4 @@ fn read() -> String {
     let mut input = String::new();
     stdin().read_line(&mut input).expect("read_line() failed");
     input
-}
-
-fn print(ast: Ast) {
-    match ast {
-        Ast::Num(num) => println!("{num}"),
-        Ast::None => println!(""),
-        Ast::Err(msg) => println!("error: {msg}"),
-    };
 }

@@ -2,7 +2,7 @@ use super::number::parse_number;
 
 /// Represents an abstract syntax tree (AST), the result of the parsing.
 #[derive(Debug, PartialEq)]
-pub enum Ast {
+pub(crate) enum Ast {
     /// Number
     Num(i64),
     /// No expression to parse found
@@ -11,8 +11,8 @@ pub enum Ast {
     Err(String),
 }
 
-/// Parses and evaluates an expression, including a definition.
-pub fn parse_expr(input: &str) -> Ast {
+/// Parses an expression, including a definition.
+pub(crate) fn parse_expr(input: &str) -> Ast {
     // Strip terminating '\n'.
     let mut input = if input.ends_with('\n') {
         &input[..input.len() - 1]
