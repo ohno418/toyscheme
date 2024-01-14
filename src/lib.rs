@@ -6,7 +6,7 @@ pub use eval::EvalResult;
 /// Evaluates user input as an expression, including a definition.
 pub fn eval(input: &str) -> EvalResult {
     let ast = parser::parse(input);
-    eval::eval(ast)
+    eval::eval_ast(ast)
 }
 
 #[cfg(test)]

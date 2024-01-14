@@ -13,13 +13,13 @@ pub enum EvalResult {
     Err(String),
 }
 
-pub(super) fn eval(ast: Ast) -> EvalResult {
+pub(super) fn eval_ast(ast: Ast) -> EvalResult {
     match ast {
         Ast::Num(num) => EvalResult::Num(num),
         Ast::Sym(sym) => EvalResult::Err(format!("unbound variable: {sym}")),
         Ast::Quote(inner) => match *inner {
             Ast::Sym(sym) => EvalResult::Sym(sym),
-            _ => eval(*inner),
+            _ => eval_ast(*inner),
         },
         Ast::None => EvalResult::None,
         Ast::Err(msg) => EvalResult::Err(msg),
@@ -44,42 +44,42 @@ mod eval_tests {
     #[test]
     fn eval_num() {
         let ast = Ast::Num(42);
-        let result = eval(ast);
+        let result = eval_ast(ast);
         assert_eq!(result, EvalResult::Num(42));
     }
 
     #[test]
     fn eval_symbol() {
         let ast = Ast::Sym("sym".to_string());
-        let result = eval(ast);
+        let result = eval_ast(ast);
         assert_eq!(result, EvalResult::Err("unbound variable: sym".to_string()));
     }
 
     #[test]
     fn eval_quoted_num() {
         let ast = Ast::Quote(Box::new(Ast::Num(42)));
-        let result = eval(ast);
+        let result = eval_ast(ast);
         assert_eq!(result, EvalResult::Num(42));
     }
 
     #[test]
     fn eval_quoted_symbol() {
         let ast = Ast::Quote(Box::new(Ast::Sym("sym".to_string())));
-        let result = eval(ast);
+        let result = eval_ast(ast);
         assert_eq!(result, EvalResult::Sym("sym".to_string()));
     }
 
     #[test]
     fn eval_none() {
         let ast = Ast::None;
-        let result = eval(ast);
+        let result = eval_ast(ast);
         assert_eq!(result, EvalResult::None);
     }
 
     #[test]
     fn eval_err() {
         let ast = Ast::Err("some error!".to_string());
-        let result = eval(ast);
+        let result = eval_ast(ast);
         assert_eq!(result, EvalResult::Err("some error!".to_string()));
     }
 }
