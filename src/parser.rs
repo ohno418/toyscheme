@@ -8,8 +8,6 @@ pub(crate) enum Ast {
     Num(i64),
     /// Symbol
     Sym(String),
-    /// Quote
-    Quote(Box<Ast>),
     /// No expression to parse found
     None,
     /// Error
