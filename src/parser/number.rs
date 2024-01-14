@@ -1,6 +1,6 @@
-use super::Ast;
+use super::Obj;
 
-pub(super) fn parse_number(input: &mut &str) -> Ast {
+pub(super) fn parse_number(input: &mut &str) -> Obj {
     let mut num_str = String::new();
     let mut chars = input.chars();
     let mut is_first = true;
@@ -25,9 +25,9 @@ pub(super) fn parse_number(input: &mut &str) -> Ast {
         Ok(num) => {
             // Consume the input only when parsing has succeeded.
             *input = &input[num_str.len()..];
-            Ast::Num(num)
+            Obj::Num(num)
         }
-        Err(_) => Ast::Err(format!(
+        Err(_) => Obj::Err(format!(
             "cannot parse a number from \"{}\"",
             input.chars().collect::<String>()
         )),
@@ -42,7 +42,7 @@ mod parse_number_tests {
     fn parse_a_number() {
         let mut s = "42";
         let result = parse_number(&mut s);
-        assert_eq!(result, Ast::Num(42));
+        assert_eq!(result, Obj::Num(42));
         assert_eq!(s, "");
     }
 
@@ -50,7 +50,7 @@ mod parse_number_tests {
     fn parse_a_number_with_extra_input() {
         let mut s = "42 hello";
         let result = parse_number(&mut s);
-        assert_eq!(result, Ast::Num(42));
+        assert_eq!(result, Obj::Num(42));
         assert_eq!(s, " hello");
     }
 
@@ -58,7 +58,7 @@ mod parse_number_tests {
     fn parse_negative_number() {
         let mut s = "-42 hello";
         let result = parse_number(&mut s);
-        assert_eq!(result, Ast::Num(-42));
+        assert_eq!(result, Obj::Num(-42));
         assert_eq!(s, " hello");
     }
 
@@ -68,7 +68,7 @@ mod parse_number_tests {
         let result = parse_number(&mut s);
         assert_eq!(
             result,
-            Ast::Err("cannot parse a number from \"hello\"".to_string())
+            Obj::Err("cannot parse a number from \"hello\"".to_string())
         );
         assert_eq!(s, "hello");
     }
@@ -79,7 +79,7 @@ mod parse_number_tests {
         let result = parse_number(&mut s);
         assert_eq!(
             result,
-            Ast::Err("cannot parse a number from \"9999999999999999999999999\"".to_string())
+            Obj::Err("cannot parse a number from \"9999999999999999999999999\"".to_string())
         );
         assert_eq!(s, "9999999999999999999999999");
     }

@@ -1,10 +1,11 @@
 mod eval;
 mod parser;
+mod types;
 
-pub use eval::EvalResult;
+pub use types::Obj;
 
 /// Evaluates user input as an expression, including a definition.
-pub fn eval(input: &str) -> EvalResult {
+pub fn eval(input: &str) -> Obj {
     let ast = parser::parse(input);
     eval::eval_ast(ast)
 }

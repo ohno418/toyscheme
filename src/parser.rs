@@ -1,20 +1,9 @@
 mod expr;
 mod number;
 
-/// Represents an abstract syntax tree (AST), the result of the parsing.
-#[derive(Debug, PartialEq)]
-pub(crate) enum Ast {
-    /// Number
-    Num(i64),
-    /// Symbol
-    Sym(String),
-    /// No expression to parse found
-    None,
-    /// Error
-    Err(String),
-}
+use crate::types::Obj;
 
-pub(crate) fn parse(input: &str) -> Ast {
+pub(crate) fn parse(input: &str) -> Obj {
     // Strip terminating '\n'.
     let mut input = if input.ends_with('\n') {
         &input[..input.len() - 1]
